@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle del Lugar</title>
+    <link rel="stylesheet" href="css/detalle.css">
+</head>
+<body>
+
+<div class="detalle-contenedor">
+
+    <button class="volver" onclick="window.location.href='paginaPrincipal.html'">⬅ Volver</button>
+
+    <div class="card-detalle" id="detalle-lugar">
+        <!-- Aquí se llenará la información del lugar -->
+    </div>
+
+    <h3>Reseñas</h3>
+    <div id="lista-reseñas" class="contenedor-resenas">
+        <!-- Aquí se mostrarán las reseñas -->
+    </div>
+
+    <h3>Agregar reseña</h3>
+
+    <div class="form-resena">
+        <label>Estrellas:</label>
+        <div class="estrellas-input" id="estrellas-input">
+            <span data-valor="1">☆</span>
+            <span data-valor="2">☆</span>
+            <span data-valor="3">☆</span>
+            <span data-valor="4">☆</span>
+            <span data-valor="5">☆</span>
+        </div>
+
+        <label>Comentario / Nota:</label>
+        <textarea id="input-nota" placeholder="Escribe tu reseña..."></textarea>
+
+        <button id="btn-agregar-resena">Agregar reseña</button>
+    </div>
+
+
+
+</div>
+
+<script src="js/detalle.js"></script>
+</body>
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reseñas de Lugares</title>
+    <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+
+<header>🌎 Reseñas de Lugares</header>
+
+<div class="contenedor">
+
+    <!-- FILTROS -->
+    <div class="filtros">
+        <input type="text" id="search" placeholder="Buscar por nombre o categoría...">
+
+        <select id="categoria">
+            <option value="">Todas las categorías</option>
+            <option value="Parque">Parques</option>
+            <option value="Restaurante">Restaurantes</option>
+            <option value="Hotel">Hoteles</option>
+            <option value="Museo">Museos</option>
+        </select>
+
+        <!-- EL BOTÓN QUE FALTABA -->
+        <button id="btnBuscar" onclick=cargarLugares()>Buscar</button>
+    </div>
+
+    <!-- DONDE SE MOSTRARÁN LOS RESULTADOS -->
+    <div class="grid-lugares" id="lista-lugares"></div>
+
+</div>
+
+<script src="js/lugares.js"></script>
+
+</body>
+</html>
