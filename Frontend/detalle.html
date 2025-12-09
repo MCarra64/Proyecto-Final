@@ -12,17 +12,19 @@
 
     <button class="volver" onclick="window.location.href='paginaPrincipal.html'">⬅ Volver</button>
 
+    <!-- Detalle del lugar -->
     <div class="card-detalle" id="detalle-lugar">
-        <!-- Aquí se llenará la información del lugar -->
+        <!-- Información del lugar se carga en detalle.js -->
     </div>
 
+    <!-- Reseñas -->
     <h3>Reseñas</h3>
     <div id="lista-reseñas" class="contenedor-resenas">
-        <!-- Aquí se mostrarán las reseñas -->
+        <!-- Reseñas se cargan en detalle.js -->
     </div>
 
+    <!-- Formulario de reseña -->
     <h3>Agregar reseña</h3>
-
     <div class="form-resena">
         <label>Estrellas:</label>
         <div class="estrellas-input" id="estrellas-input">
@@ -39,10 +41,16 @@
         <button id="btn-agregar-resena">Agregar reseña</button>
     </div>
 
-
+    <!-- Contenedor de recomendaciones -->
+    <h3>Lugares cercanos</h3>
+    <div id="recomendaciones">
+        <!-- Se llenará automáticamente desde grafo.js -->
+    </div>
 
 </div>
 
+<!-- Scripts -->
 <script src="js/detalle.js"></script>
+<script src="js/grafo.js"></script>
 </body>
 </html>

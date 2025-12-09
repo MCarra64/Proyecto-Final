@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reseñas de Lugares</title>
     <link rel="stylesheet" href="css/estilos.css">
+    <link rel="stylesheet" href="css/mapa.css">
+    <link rel="stylesheet" href="css/modal.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 </head>
 <body>
 
@@ -15,7 +18,6 @@
     <!-- FILTROS -->
     <div class="filtros">
         <input type="text" id="search" placeholder="Buscar por nombre o categoría...">
-
         <select id="categoria">
             <option value="">Todas las categorías</option>
             <option value="Parque">Parques</option>
@@ -23,17 +25,60 @@
             <option value="Hotel">Hoteles</option>
             <option value="Museo">Museos</option>
         </select>
+        <button id="btnBuscar" onclick="buscarLugar()">Buscar</button>
 
-        <!-- EL BOTÓN QUE FALTABA -->
-        <button id="btnBuscar" onclick=cargarLugares()>Buscar</button>
+        
     </div>
 
-    <!-- DONDE SE MOSTRARÁN LOS RESULTADOS -->
-    <div class="grid-lugares" id="lista-lugares"></div>
+    <!-- MAPA -->
+    <div id="map"></div>
+
+    <!-- BOTÓN PARA AGREGAR LUGAR -->
+<button id="btnAgregarLugar" style="margin-top:10px;">➕ Agregar Lugar</button>
+
+<!-- MODAL -->
+<div id="modalLugar" class="modal">
+    <div class="modal-contenido">
+        <span class="cerrar">&times;</span>
+        <h2>Agregar Lugar</h2>
+        <form id="formAgregarLugar">
+            <label>Nombre:</label><br>
+            <input type="text" name="nombre" required><br><br>
+
+            <label>Descripción:</label><br>
+            <textarea name="descripcion"></textarea><br><br>
+
+            <label>Categoría:</label><br>
+            <select name="categoria" required>
+                <option value="">Selecciona</option>
+                <option value="Parque">Parque</option>
+                <option value="Restaurante">Restaurante</option>
+                <option value="Hotel">Hotel</option>
+                <option value="Museo">Museo</option>
+            </select><br><br>
+
+            <label>Latitud:</label><br>
+            <input type="number" step="0.000001" name="lat" required><br><br>
+
+            <label>Longitud:</label><br>
+            <input type="number" step="0.000001" name="lng" required><br><br>
+
+            <label>URL de Imagen:</label><br>
+            <input type="text" name="imagen_url"><br><br>
+
+            <button type="submit">Agregar</button>
+        </form>
+    </div>
+</div>
+
 
 </div>
 
-<script src="js/lugares.js"></script>
 
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="js/lugares.js"></script>
+<script src="js/mapa.js"></script>
+<script src="js/agregarlugar.js"></script>
 </body>
 </html>
