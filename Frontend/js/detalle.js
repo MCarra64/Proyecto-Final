@@ -1,4 +1,3 @@
-// Obtener el ID desde la URL
 const params = new URLSearchParams(window.location.search);
 const id = params.get("id");
 
@@ -9,7 +8,6 @@ let estrellasSeleccionadas = 0;
 const estrellasElems = document.querySelectorAll("#estrellas-input span");
 
 estrellasElems.forEach(span => {
-    // Hover visual
     span.addEventListener("mouseover", () => {
         const valor = parseInt(span.dataset.valor);
         estrellasElems.forEach(s => s.classList.toggle("hover", parseInt(s.dataset.valor) <= valor));
@@ -19,13 +17,11 @@ estrellasElems.forEach(span => {
         estrellasElems.forEach(s => s.classList.remove("hover"));
     });
 
-    // Seleccionar
     span.addEventListener("click", () => {
         estrellasSeleccionadas = parseInt(span.dataset.valor);
         estrellasElems.forEach(s => s.classList.toggle("selected", parseInt(s.dataset.valor) <= estrellasSeleccionadas));
     });
 });
-
 
 document.getElementById("btn-agregar-resena").addEventListener("click", async () => {
 
@@ -49,10 +45,8 @@ document.getElementById("btn-agregar-resena").addEventListener("click", async ()
         });
 
         const data = await res.json();
-        console.log(data);
 
         if (data.id) {
-            // Reseña creada exitosamente
             document.getElementById("input-nota").value = "";
             cargarResenas();
         } else {
@@ -65,6 +59,7 @@ document.getElementById("btn-agregar-resena").addEventListener("click", async ()
     }
 });
 
+// Informacion principal
 async function cargarDetalle() {
     if (!id) {
         contenedor.innerHTML = "<p>No se proporcionó ID.</p>";
@@ -72,7 +67,6 @@ async function cargarDetalle() {
     }
 
     try {
-        // Obtener detalle del lugar
         const res = await fetch(`http://localhost:3001/api/lugares/get_lugar.php?id=${id}`);
         const data = await res.json();
 
@@ -82,9 +76,8 @@ async function cargarDetalle() {
         }
 
         mostrarDetalle(data);
-
-        // Después de mostrar el lugar, cargar las reseñas
         cargarResenas();
+        cargarRecomendaciones(parseInt(id));
 
     } catch (error) {
         console.error(error);
@@ -93,8 +86,16 @@ async function cargarDetalle() {
 }
 
 function mostrarDetalle(lugar) {
+    let imagenSrc = lugar.imagen_url;
+
+    if (!imagenSrc) {
+        imagenSrc = "https://via.placeholder.com/400";
+    } else if (!imagenSrc.startsWith("http")) {
+        imagenSrc = "img/" + imagenSrc;
+    }
+
     contenedor.innerHTML = `
-        <img src="img/${lugar.imagen_url}" alt="${lugar.nombre}">
+        <img src="${imagenSrc}" alt="${lugar.nombre}">
         <h2>${lugar.nombre}</h2>
         <p><strong>Categoría:</strong> ${lugar.categoria}</p>
         <p>${lugar.descripcion}</p>
@@ -103,9 +104,13 @@ function mostrarDetalle(lugar) {
             📍 Latitud: ${lugar.lat} <br>
             📍 Longitud: ${lugar.lng}
         </p>
+
+        <h3>Recomendaciones cercanas</h3>
+        <div id="recomendaciones"></div>
     `;
 }
 
+// Reseñas
 async function cargarResenas() {
     try {
         const res = await fetch(`http://localhost:3001/api/resenas/get_resenas.php?lugar_id=${id}`);
@@ -146,9 +151,6 @@ function mostrarResenas(lista) {
     `).join("");
 }
 
-// -------------------------------
-// Evento para eliminar reseña
-// -------------------------------
 document.addEventListener("click", async function(e) {
     if (e.target.classList.contains("btn-eliminar-resena")) {
         const card = e.target.closest(".resena-card");
@@ -157,19 +159,16 @@ document.addEventListener("click", async function(e) {
         if (!confirm("¿Seguro que deseas eliminar esta reseña?")) return;
 
         try {
-            const res = await fetch(
-                `http://localhost:3001/api/resenas/delete_resena.php`,
-                {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ id: resenaId })
-                }
-            );
+            const res = await fetch(`http://localhost:3001/api/resenas/delete_resena.php`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ id: resenaId })
+            });
 
             const data = await res.json();
 
             if (data.success) {
-                cargarResenas(); // Recargar lista
+                cargarResenas();
             } else {
                 alert("No se pudo eliminar.");
             }
@@ -179,5 +178,45 @@ document.addEventListener("click", async function(e) {
         }
     }
 });
+
+// Recomendaciones (Grafo)
+async function cargarRecomendaciones(lugarId) {
+    const cont = document.getElementById("recomendaciones");
+    cont.innerHTML = "Cargando...";
+
+    const res = await fetch("http://localhost:3001/api/lugares/get_lugares.php");
+    const lugares = await res.json();
+
+    const grafo = new Grafo();
+
+    for (let i = 0; i < lugares.length; i++) {
+        for (let j = i + 1; j < lugares.length; j++) {
+            const l1 = lugares[i], l2 = lugares[j];
+            const peso = distanciaHaversine(l1.lat, l1.lng, l2.lat, l2.lng);
+            grafo.union(l1.id, l2.id, peso);
+        }
+    }
+
+    const adyacentes = grafo.obtenerAdyacentes(lugarId)
+        .map(dest => ({ id: dest, peso: grafo.vertices[lugarId][dest] }))
+        .sort((a, b) => a.peso - b.peso)
+        .slice(0, 3);
+
+    cont.innerHTML = "";
+
+    adyacentes.forEach(a => {
+        const lug = lugares.find(x => x.id == a.id);
+        const div = document.createElement("div");
+        div.classList.add("card-recomendacion");
+
+        div.innerHTML = `
+            <h4>${lug.nombre}</h4>
+            <p>${lug.descripcion}</p>
+            <small>${a.peso.toFixed(2)} km</small>
+        `;
+
+        cont.appendChild(div);
+    });
+}
 
 cargarDetalle();

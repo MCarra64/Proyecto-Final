@@ -83,3 +83,32 @@ async function cargarLugaresMapa() {
 window.addEventListener("load", cargarLugaresMapa);
 document.getElementById("search").addEventListener("input", filtrarLugares);
 document.getElementById("categoria").addEventListener("change", filtrarLugares);
+
+// ========================
+// AGREGAR LUGAR CON CLIC EN EL MAPA
+// ========================
+let marcadorTemporal = null;
+
+map.on("click", function(e) {
+    const lat = e.latlng.lat.toFixed(6);
+    const lng = e.latlng.lng.toFixed(6);
+
+    console.log("📌 Clic en el mapa:", lat, lng);
+
+    // Eliminar marcador previo si existía
+    if (marcadorTemporal) {
+        map.removeLayer(marcadorTemporal);
+    }
+
+    // Crear marcador temporal donde el usuario hizo clic
+    marcadorTemporal = L.marker([lat, lng]).addTo(map)
+        .bindPopup("Nuevo lugar aquí").openPopup();
+
+    // Abrir el modal de agregar lugar
+    document.getElementById("modalLugar").style.display = "block";
+
+    // Llenar automáticamente la latitud y longitud
+    const form = document.getElementById("formAgregarLugar");
+    form.lat.value = lat;
+    form.lng.value = lng;
+});

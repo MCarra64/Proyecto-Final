@@ -1,10 +1,4 @@
-// ===== CONFIGURACIÓN GLOBAL =====
-
 const API_BASE = "http://localhost:3001/api";
-
-// ================================
-//     PETICIONES PARA LUGARES
-// ================================
 
 export async function obtenerLugares(filtros = {}) {
     let url = `${API_BASE}/lugares/get_lugares.php`;
